@@ -26,7 +26,7 @@ This is a flexible workspace for experiments, prototypes, or projects in progres
 
 1. **Clone this repo**  
    ```bash
-   git clone https://github.com/atharvadv/temp_repo.git
+   git clone https://github.com/atharvadv/temprepo.git
    ```
 
 2. **Start developing!**  
