@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>String Operations</title>
+</head>
+<body style="font-family: Arial; padding: 20px; background: #eef2f3;">
+  <h2>String Operations in JavaScript</h2>
+  <p>Enter any string to perform operations:</p>
+
+  <input type="text" id="inputString" placeholder="Enter your string">
+  <button onclick="performOperations()">Run</button>
+
+  <h3>Results:</h3>
+  <pre id="output"></pre>
+
+  <script>
+    function performOperations() {
+      let str = document.getElementById("inputString").value;
+
+      // 1️⃣ Reverse the string
+      let reversed = str.split("").reverse().join("");
+
+      // 2️⃣ Replace characters (example: replace 'a' with '@')
+      let replaced = str.replace(/a/g, "@");
+
+      // 3️⃣ Check palindrome (same forward & backward)
+      let isPalindrome = (str.toLowerCase() === reversed.toLowerCase());
+
+      // Display results
+      document.getElementById("output").textContent =
+        `Original String: ${str}\n` +
+        `Reversed String: ${reversed}\n` +
+        `After Replace (a → @): ${replaced}\n` +
+        `Is Palindrome?: ${isPalindrome ? "Yes" : "No"}`;
+    }
+  </script>
+</body>
+</html>
