@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Home Page</title>
+  <meta charset="UTF-8">
+
+  <style>
+    body {
+      font-family: Arial;
+      transition: background-color 0.5s;
+    }
+    input {
+      padding: 6px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+
+  <script>
+    // Change background color on mouse over
+    function changeBGOnMouseOver() {
+      document.body.style.backgroundColor = "lightblue";
+    }
+
+    // Change background color on focus (input focus)
+    function changeBGOnFocus() {
+      document.body.style.backgroundColor = "lightgreen";
+    }
+  </script>
+</head>
+
+<body>
+
+  <h1>Welcome to My Home Page</h1>
+
+  <!-- Mouse Over Event -->
+  <button onmouseover="changeBGOnMouseOver()">
+    Hover to Change Background Color
+  </button>
+
+  <br><br>
+
+  <!-- Focus Event -->
+  Enter your name:
+  <input type="text" onfocus="changeBGOnFocus()">
+
+</body>
+</html>
