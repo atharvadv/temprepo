@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>String Comparison</title>
+</head>
+<body style="font-family: Arial; padding: 20px;">
+
+  <h2>Compare Two Strings (JavaScript)</h2>
+
+  <input type="text" id="str1" placeholder="Enter first string">
+  <br><br>
+  <input type="text" id="str2" placeholder="Enter second string">
+  <br><br>
+  
+  <button onclick="compareStrings()">Compare</button>
+
+  <h3>Results:</h3>
+  <pre id="output"></pre>
+
+  <script>
+    function compareStrings() {
+      let s1 = document.getElementById("str1").value;
+      let s2 = document.getElementById("str2").value;
+
+      // Method 1: Direct Comparison
+      let direct = (s1 === s2);
+
+      // Method 2: Case-Insensitive Comparison
+      let caseInsensitive = (s1.toLowerCase() === s2.toLowerCase());
+
+      // Method 3: Locale Compare (for alphabetical order)
+      let locale = s1.localeCompare(s2); 
+      // -1 → s1 comes first
+      // 0  → equal
+      // 1  → s2 comes first
+
+      // Method 4: Length Comparison
+      let lengthCompare = (s1.length === s2.length);
+
+      document.getElementById("output").textContent =
+        `String 1: ${s1}\n` +
+        `String 2: ${s2}\n\n` +
+
+        `1. Direct Comparison (===): ${direct}\n` +
+        `2. Case-Insensitive Compare: ${caseInsensitive}\n` +
+        `3. localeCompare(): ${locale}\n` +
+        `4. Same Length?: ${lengthCompare}`;
+    }
+  </script>
+
+</body>
+</html>
