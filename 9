@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Simple Calculator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg: #f3f4f6;
+      --panel: #ffffff;
+      --accent: #0ea5a4;
+      --btn: #e6e7e8;
+      --danger: #ef4444;
+      --text: #0f1724;
+    }
+    body{
+      background: var(--bg);
+      font-family: Inter, Arial, sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      margin:0;
+      color:var(--text);
+    }
+
+    .calc {
+      width:320px;
+      background:var(--panel);
+      border-radius:12px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.12);
+      padding:18px;
+    }
+
+    .display {
+      width:100%;
+      height:56px;
+      border-radius:8px;
+      border:1px solid #d1d5db;
+      font-size:22px;
+      padding:8px 12px;
+      text-align:right;
+      margin-bottom:12px;
+      box-sizing:border-box;
+      background:#fafafa;
+      overflow:hidden;
+      white-space:nowrap;
+    }
+
+    .buttons {
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+
+    button {
+      height:52px;
+      border-radius:8px;
+      border:0;
+      background:var(--btn);
+      font-size:18px;
+      cursor:pointer;
+      box-shadow: 0 4px 8px rgba(2,6,23,0.06);
+    }
+
+    button.operator { background: #f8fafc; color: var(--accent); font-weight:700; }
+    button.equal    { background: var(--accent); color:#fff; grid-column: span 2; }
+    button.clear    { background: var(--danger); color:#fff; }
+    button.function { background:#eef2f6; }
+
+    /* make 0 span two columns (like real calculators) */
+    button.zero { grid-column: span 2; }
+
+    .note { font-size:12px; color:#64748b; margin-top:10px; text-align:center; }
+  </style>
+</head>
+<body>
+
+  <div class="calc">
+    <div id="display" class="display">0</div>
+
+    <div class="buttons">
+      <button class="function" data-action="square">x²</button>
+      <button class="function" data-action="paren">( )</button>
+      <button class="function" data-action="clear">C</button>
+      <button class="operator" data-value="/">÷</button>
+
+      <button data-value="7">7</button>
+      <button data-value="8">8</button>
+      <button data-value="9">9</button>
+      <button class="operator" data-value="*">×</button>
+
+      <button data-value="4">4</button>
+      <button data-value="5">5</button>
+      <button data-value="6">6</button>
+      <button class="operator" data-value="-">−</button>
+
+      <button data-value="1">1</button>
+      <button data-value="2">2</button>
+      <button data-value="3">3</button>
+      <button class="operator" data-value="+">+</button>
+
+      <button class="zero" data-value="0">0</button>
+      <button data-value=".">.</button>
+      <button class="equal" data-action="equals">=</button>
+    </div>
+
+    <div class="note">Supports + − × ÷ , square, parentheses. Invalid inputs prompt alert.</div>
+  </div>
+
+  <script>
+    (function(){
+      const display = document.getElementById('display');
+      let expr = ''; // current expression shown/stored
+
+      // Utility: update display text (prevent empty)
+      function updateDisplay(txt) {
+        display.textContent = txt === '' ? '0' : txt;
+      }
+
+      // Basic input sanitizer for expression evaluation
+      // Allowed chars: digits, operators + - * / . ( )
+      function isValidExpression(s) {
+        // reject empty, consecutive invalid operator combos like "**" not needed to fully prevent but basic check
+        if (!s || /^\s*$/.test(s)) return false;
+
+        // allow only digits, whitespace, parentheses, dot and +-*/ 
+        if (!/^[0-9+\-*/().\s]+$/.test(s)) return false;
+
+        // simple bracket balance check
+        let bal = 0;
+        for (const ch of s) {
+          if (ch === '(') bal++;
+          if (ch === ')') bal--;
+          if (bal < 0) return false;
+        }
+        if (bal !== 0) return false;
+
+        // prevent things like two operators in row (except minus for negative numbers)
+        if (/[+\-*/]{2,}/.test(s.replace(/\s+/g,''))) return false;
+
+        return true;
+      }
+
+      // Safe evaluate using Function constructor after basic validation
+      function safeEval(s) {
+        if (!isValidExpression(s)) throw new Error('Invalid expression');
+        // replace ÷ and × in case they appear (we use ascii in data-values)
+        // evaluate
+        // Using Function gives similar power to eval; we've validated chars above.
+        // Still keep try/catch around caller.
+        return Function('"use strict"; return (' + s + ')')();
+      }
+
+      // Button handling
+      document.querySelectorAll('.buttons button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const v = btn.getAttribute('data-value');
+          const action = btn.getAttribute('data-action');
+
+          if (action === 'clear') {
+            expr = '';
+            updateDisplay(expr);
+            return;
+          }
+
+          if (action === 'equals') {
+            // evaluate
+            try {
+              if (!isValidExpression(expr)) {
+                alert('Invalid input! Check expression.');
+                return;
+              }
+              const res = safeEval(expr);
+              if (!isFinite(res)) {
+                alert('Math error (division by zero or overflow).');
+                return;
+              }
+              expr = String(res);
+              updateDisplay(expr);
+            } catch (e) {
+              alert('Invalid input! Please enter a correct expression.');
+            }
+            return;
+          }
+
+          if (action === 'square') {
+            // square current number or whole expression result
+            try {
+              if (expr.trim() === '') {
+                alert('Enter a number or expression before squaring.');
+                return;
+              }
+              if (!isValidExpression(expr)) { alert('Invalid input!'); return; }
+              const val = safeEval(expr);
+              const sq = val * val;
+              if (!isFinite(sq)) { alert('Math error.'); return; }
+              expr = String(sq);
+              updateDisplay(expr);
+            } catch {
+              alert('Cannot square that input.');
+            }
+            return;
+          }
+
+          if (action === 'paren') {
+            // simple: if last char is '(', add ')', else add '('
+            const last = expr.slice(-1);
+            if (last === '(') expr += ')';
+            else expr += '(';
+            updateDisplay(expr);
+            return;
+          }
+
+          // Default: append value (digit / operator / dot)
+          if (v) {
+            expr += v;
+            updateDisplay(expr);
+          }
+        });
+      });
+
+      // optional: keyboard support (basic)
+      window.addEventListener('keydown', e => {
+        const allowed = '0123456789+-*/().';
+        if (allowed.includes(e.key)) {
+          expr += e.key;
+          updateDisplay(expr);
+        } else if (e.key === 'Enter') {
+          document.querySelector('[data-action="equals"]').click();
+        } else if (e.key === 'Backspace') {
+          expr = expr.slice(0, -1);
+          updateDisplay(expr);
+        } else if (e.key.toLowerCase() === 'c') {
+          expr = '';
+          updateDisplay(expr);
+        }
+      });
+
+      // init
+      updateDisplay(expr);
+    })();
+  </script>
+</body>
+</html>
