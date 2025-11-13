@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area Calculator</title>
+</head>
+<body style="font-family: Arial; padding: 20px; background: #f7f7f7;">
+  <h2>Area Calculator (Triangle, Rectangle, Circle)</h2>
+  <p>Enter the dimensions below and click "Calculate".</p>
+
+  <h3>Triangle</h3>
+  Base: <input type="number" id="base" placeholder="Enter base">  
+  Height: <input type="number" id="height" placeholder="Enter height">  
+  <br><br>
+
+  <h3>Rectangle</h3>
+  Length: <input type="number" id="length" placeholder="Enter length">  
+  Width: <input type="number" id="width" placeholder="Enter width">  
+  <br><br>
+
+  <h3>Circle</h3>
+  Radius: <input type="number" id="radius" placeholder="Enter radius">  
+  <br><br>
+
+  <button onclick="calculateAreas()">Calculate</button>
+
+  <h3>Results:</h3>
+  <pre id="output"></pre>
+
+  <script>
+    // Function definitions
+    function areaOfTriangle(base, height) {
+      return 0.5 * base * height;
+    }
+
+    function areaOfRectangle(length, width) {
+      return length * width;
+    }
+
+    function areaOfCircle(radius) {
+      return Math.PI * radius * radius;
+    }
+
+    // Main calculation function
+    function calculateAreas() {
+      let base = parseFloat(document.getElementById('base').value);
+      let height = parseFloat(document.getElementById('height').value);
+      let length = parseFloat(document.getElementById('length').value);
+      let width = parseFloat(document.getElementById('width').value);
+      let radius = parseFloat(document.getElementById('radius').value);
+
+      // Calculations
+      let triangleArea = areaOfTriangle(base, height);
+      let rectangleArea = areaOfRectangle(length, width);
+      let circleArea = areaOfCircle(radius);
+
+      // Output results
+      document.getElementById('output').textContent = 
+        `Area of Triangle: ${triangleArea}\n` +
+        `Area of Rectangle: ${rectangleArea}\n` +
+        `Area of Circle: ${circleArea.toFixed(2)}`;
+    }
+  </script>
+</body>
+</html>
